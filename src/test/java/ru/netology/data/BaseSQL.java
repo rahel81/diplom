@@ -2,17 +2,31 @@ package ru.netology.data;
 
 import lombok.val;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class BaseSQL {
+
     private BaseSQL() {
     }
 
-       public static Connection getConnection() throws SQLException {
-        final Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/app", "app", "pass");
+    private static Connection connection;
+
+    public static Connection getConnection() throws SQLException {
+        try (FileInputStream appProperties = new FileInputStream("./application.properties")) {
+            Properties appProp = new Properties();
+            appProp.load(appProperties);
+            final String DB_URL = appProp.getProperty("spring.datasource.url");
+            final String DB_USER = appProp.getProperty("spring.datasource.username");
+            final String DB_PASSWORD = appProp.getProperty("spring.datasource.password");
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        } catch (SQLException | IOException throwable) {
+            throwable.printStackTrace();
+        }
         return connection;
     }
 
@@ -30,7 +44,7 @@ public class BaseSQL {
         } catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
-           }
+    }
 
     public static String getStatusDebitCardPayment(String paymentId) {
         String status = null;
@@ -47,7 +61,7 @@ public class BaseSQL {
         } catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
-           }
+    }
 
     public static String getStatusCreditPayment(String paymentId) {
         String statusSQL = "SELECT status FROM credit_request_entity WHERE bank_id =?; ";
@@ -62,7 +76,7 @@ public class BaseSQL {
         } catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
-          }
+    }
 
     public static String getAmountPayment(String paymentId) {
         String amount = null;
@@ -79,7 +93,7 @@ public class BaseSQL {
         } catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
-            }
+    }
 
     public static void cleanBase() {
         String deleteOrder = "DELETE FROM order_entity;";
