@@ -17,7 +17,7 @@
 * ***При прохождении тестов на PostgerSQL в параметре spring.datasource.url необходимо написать***   
     `jdbc:postgresql://localhost:5433/postgres`  
     либо  
-    `jdbc:postgresql://localhost:5433/postgres`  
+    `jdbc:postgresql://0.0.0.0:5433/postgres`  
     где вместо 0.0.0.0 необходимо указать IP-адрес компьютера с которого осуществляется запуск
 
 
